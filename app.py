@@ -5,7 +5,7 @@ import uuid
 
 app = Flask(__name__)
 
-model = whisper.load_model("small")
+model = whisper.load_model("tiny")
 
 @app.route('/api/audio', methods=['POST'])
 def transcribe_audio():
@@ -28,4 +28,4 @@ def transcribe_audio():
 print(__name__)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

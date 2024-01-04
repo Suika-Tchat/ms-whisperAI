@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: back_voice_transcription_image
+    container_name: back_voice_transcription_IA
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/app
