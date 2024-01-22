@@ -16,7 +16,7 @@ def transcribe_audio():
         return jsonify({"error": "No selected file"}), 400
 
     unique_filename = str(uuid.uuid4()) + ".mp4"
-    audio_path = "temp/" + unique_filename
+    audio_path = "./" + unique_filename
     file.save(audio_path)
 
     result = model.transcribe(audio_path)
