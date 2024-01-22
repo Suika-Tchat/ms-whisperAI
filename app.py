@@ -2,9 +2,12 @@ from flask import Flask, request, jsonify
 import whisper
 import os
 import uuid
+import tempfile
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
+# Chargement du modèle Whisper en dehors de la route API
 model = whisper.load_model("tiny")
 
 @app.route('/api/audio', methods=['POST'])
@@ -15,17 +18,19 @@ def transcribe_audio():
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
 
-    unique_filename = str(uuid.uuid4()) + ".mp4"
-    audio_path = "./" + unique_filename
-    file.save(audio_path)
+    # Vérification de la sécurité du fichier
+    # filename = secure_filename(file.filename)
+    # if not filename.endswith('.mp4'):
+    #     return jsonify({"error": "Invalid file type"}), 400
 
-    result = model.transcribe(audio_path)
+    # Utilisation d'un fichier temporaire
+    with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_file:
+        file.save(temp_file.name)
+        result = model.transcribe(temp_file.name)
 
-    os.remove(audio_path)
+    os.remove(temp_file.name)
 
     return jsonify({"transcription": result['text']})
 
-print(__name__)
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=False)
